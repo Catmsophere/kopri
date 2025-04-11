@@ -117,6 +117,8 @@ format_catmosphere <- function(rast,filename){
 ain_plot <- format_catmosphere(ain,"AIN")
 
 breaks <- seq(0, 1500, by = 50)
+col <- gray.colors(length(breaks), start = 0.1, end = 1)
+
 
 # Generate one PNG per range: 0–50, 51–100, 101–150, etc.
 for (i in seq_along(breaks)[-length(breaks)]) {
@@ -133,17 +135,18 @@ for (i in seq_along(breaks)[-length(breaks)]) {
   
   # Get bounding box coordinates
   ext <- ext(ain_sub)
-  bbox <- matrix(c(ext[1], ext[3], ext[2], ext[4]), nrow = 2, byrow = TRUE)
-  
+  bounds <- list(
+    c(ext[3], ext[1]),  # ymin, xmin
+    c(ext[4], ext[2])   # ymax, xmax
+  )
   # Print bounding box for Leaflet
   print(lower)
   print("\n")
   print(bbox)
   
-  png(png_name, width = 800, height = 600, bg = "transparent")
-  par(mar = c(0, 0, 0, 0), xaxs = "i", yaxs = "i")
+  png(png_name, bg = "transparent")
   plot(ain_sub,
-       col = gray.colors(100, start = 1, end = 0),  # White = low, black = high
+       col = col[i],  # White = low, black = high
        legend = FALSE, axes = FALSE, box = FALSE)
   dev.off()
 }
